@@ -1,0 +1,16 @@
+BasedOnStyle: Google
+
+AlignAfterOpenBracket: DontAlign
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+
+AllowShortCaseLabelsOnASingleLine: true
+
+BreakConstructorInitializersBeforeComma: true
+BreakStringLiterals: false
+
+PenaltyBreakAssignment: 20
+PenaltyBreakBeforeFirstCallParameter: 50
+
+DerivePointerAlignment: false
+PointerAlignment: Left
