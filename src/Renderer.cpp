@@ -254,6 +254,7 @@ void Renderer::draw(MTK::View* pView) {
   pCameraData->worldTransform       = Math::makeIdentity();
   pCameraData->worldNormalTransform = Math::discardTranslation(
       pCameraData->worldTransform);
+  pCameraData->cameraPosition = {0.f, 0.f, 0.f};
   pCameraDataBuffer->didModifyRange(
       NS::Range::Make(0, sizeof(shader_types::CameraData)));
 

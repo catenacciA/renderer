@@ -59,11 +59,12 @@ v2f vertex vertexMain(device const VertexData* vertexData [[buffer(0)]],
 half4 fragment fragmentMain(v2f in [[stage_in]], 
                           constant CameraData& cameraData [[buffer(0)]],
                           constant LightData& lightData [[buffer(1)]]) {
-    float3 normal = normalize(in.normal);
+    float3 normal = in.normal;
     
     float3 lightVec = lightData.position - in.worldPos;
-    float distance = length(lightVec);
-    float3 lightDir = normalize(lightVec);
+    float distanceSq = dot(lightVec, lightVec);
+    float distance = sqrt(distanceSq);
+    float3 lightDir = lightVec / distance;
     
     float attenuation = saturate(1.0 - distance / lightData.range);
     attenuation *= attenuation;

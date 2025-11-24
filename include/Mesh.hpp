@@ -23,6 +23,7 @@ struct CameraData {
   simd::float4x4 perspectiveTransform;
   simd::float4x4 worldTransform;
   simd::float3x3 worldNormalTransform;
+  simd::float3   cameraPosition;
 };
 struct LightData {
   simd::float3 position;
