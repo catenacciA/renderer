@@ -59,6 +59,9 @@ v2f vertex vertexMain(device const VertexData* vertexData [[buffer(0)]],
 half4 fragment fragmentMain(v2f in [[stage_in]], 
                           constant CameraData& cameraData [[buffer(0)]],
                           constant LightData& lightData [[buffer(1)]]) {
+    // Note: Normals are normalized in vertex shader. While interpolation can 
+    // denormalize them slightly, we skip re-normalization here for performance.
+    // For this real-time renderer, the minor lighting inaccuracy is acceptable.
     float3 normal = in.normal;
     
     float3 lightVec = lightData.position - in.worldPos;
