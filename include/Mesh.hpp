@@ -49,16 +49,23 @@ class SphereMesh : public Mesh {
 
   std::vector<shader_types::VertexData> getVertices() const override {
     std::vector<shader_types::VertexData> vertices;
+    vertices.reserve((stacks_ + 1) * (slices_ + 1));
+    
     for (unsigned int i = 0; i <= stacks_; ++i) {
       float V   = static_cast<float>(i) / static_cast<float>(stacks_);
       float phi = V * M_PI;
+      float sinPhi = sinf(phi);
+      float cosPhi = cosf(phi);
+      
       for (unsigned int j = 0; j <= slices_; ++j) {
         float U     = static_cast<float>(j) / static_cast<float>(slices_);
         float theta = U * (M_PI * 2);
+        float sinTheta = sinf(theta);
+        float cosTheta = cosf(theta);
 
-        float x = radius_ * sinf(phi) * cosf(theta);
-        float y = radius_ * cosf(phi);
-        float z = radius_ * sinf(phi) * sinf(theta);
+        float x = radius_ * sinPhi * cosTheta;
+        float y = radius_ * cosPhi;
+        float z = radius_ * sinPhi * sinTheta;
 
         float nx = x / radius_;
         float ny = y / radius_;
@@ -72,6 +79,8 @@ class SphereMesh : public Mesh {
 
   std::vector<uint16_t> getIndices() const override {
     std::vector<uint16_t> indices;
+    indices.reserve(stacks_ * slices_ * 6);
+    
     for (unsigned int i = 0; i < stacks_; ++i) {
       for (unsigned int j = 0; j < slices_; ++j) {
         uint16_t first  = (i * (slices_ + 1)) + j;

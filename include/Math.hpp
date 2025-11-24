@@ -31,26 +31,29 @@ simd::float4x4 makePerspective(
 
 simd::float4x4 makeXRotate(float angleRadians) {
   using simd::float4;
-  const float a = angleRadians;
+  const float c = cosf(angleRadians);
+  const float s = sinf(angleRadians);
   return simd_matrix_from_rows((float4){1.0f, 0.0f, 0.0f, 0.0f},
-      (float4){0.0f, cosf(a), sinf(a), 0.0f},
-      (float4){0.0f, -sinf(a), cosf(a), 0.0f},
+      (float4){0.0f, c, s, 0.0f},
+      (float4){0.0f, -s, c, 0.0f},
       (float4){0.0f, 0.0f, 0.0f, 1.0f});
 }
 
 simd::float4x4 makeYRotate(float angleRadians) {
   using simd::float4;
-  const float a = angleRadians;
-  return simd_matrix_from_rows((float4){cosf(a), 0.0f, sinf(a), 0.0f},
-      (float4){0.0f, 1.0f, 0.0f, 0.0f}, (float4){-sinf(a), 0.0f, cosf(a), 0.0f},
+  const float c = cosf(angleRadians);
+  const float s = sinf(angleRadians);
+  return simd_matrix_from_rows((float4){c, 0.0f, s, 0.0f},
+      (float4){0.0f, 1.0f, 0.0f, 0.0f}, (float4){-s, 0.0f, c, 0.0f},
       (float4){0.0f, 0.0f, 0.0f, 1.0f});
 }
 
 simd::float4x4 makeZRotate(float angleRadians) {
   using simd::float4;
-  const float a = angleRadians;
-  return simd_matrix_from_rows((float4){cosf(a), sinf(a), 0.0f, 0.0f},
-      (float4){-sinf(a), cosf(a), 0.0f, 0.0f}, (float4){0.0f, 0.0f, 1.0f, 0.0f},
+  const float c = cosf(angleRadians);
+  const float s = sinf(angleRadians);
+  return simd_matrix_from_rows((float4){c, s, 0.0f, 0.0f},
+      (float4){-s, c, 0.0f, 0.0f}, (float4){0.0f, 0.0f, 1.0f, 0.0f},
       (float4){0.0f, 0.0f, 0.0f, 1.0f});
 }
 

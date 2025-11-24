@@ -127,22 +127,20 @@ void Renderer::buildBuffers() {
   _pVertexDataBuffer->didModifyRange(NS::Range::Make(0, vertexDataSize));
   _pIndexBuffer->didModifyRange(NS::Range::Make(0, indexDataSize));
 
-  const size_t instanceDataSize = kMaxFramesInFlight * kNumInstances *
+  const size_t instanceDataSize = kNumInstances *
                                   sizeof(shader_types::InstanceData);
   for (size_t i = 0; i < kMaxFramesInFlight; ++i) {
     _pInstanceDataBuffer[i] = _pDevice->newBuffer(
         instanceDataSize, MTL::ResourceStorageModeManaged);
   }
 
-  const size_t cameraDataSize = kMaxFramesInFlight *
-                                sizeof(shader_types::CameraData);
+  const size_t cameraDataSize = sizeof(shader_types::CameraData);
   for (size_t i = 0; i < kMaxFramesInFlight; ++i) {
     _pCameraDataBuffer[i] = _pDevice->newBuffer(
         cameraDataSize, MTL::ResourceStorageModeManaged);
   }
 
-  const size_t lightDataSize = kMaxFramesInFlight *
-                               sizeof(shader_types::LightData);
+  const size_t lightDataSize = sizeof(shader_types::LightData);
   for (size_t i = 0; i < kMaxFramesInFlight; ++i) {
     _pLightDataBuffer[i] = _pDevice->newBuffer(
         lightDataSize, MTL::ResourceStorageModeManaged);
@@ -187,6 +185,12 @@ void Renderer::draw(MTK::View* pView) {
   _angle += 0.002f;
 
   const float                 scl = 0.2f;
+  const float                 scl2 = 2.f * scl;
+  const float                 halfRows = (float)kInstanceRows / 2.f;
+  const float                 halfColumns = (float)kInstanceColumns / 2.f;
+  const float                 halfDepth = (float)kInstanceDepth / 2.f;
+  const float                 invNumInstances = 1.f / (float)kNumInstances;
+  
   shader_types::InstanceData* pInstanceData =
       reinterpret_cast<shader_types::InstanceData*>(
           pInstanceDataBuffer->contents());
@@ -199,6 +203,7 @@ void Renderer::draw(MTK::View* pView) {
   float4x4 rtInv = Math::makeTranslate(
       {-objectPosition.x, -objectPosition.y, -objectPosition.z});
   float4x4 fullObjectRot = rt * rr1 * rr0 * rtInv;
+  float4x4 scale = Math::makeScale((float3){scl, scl, scl});
 
   size_t ix = 0;
   size_t iy = 0;
@@ -213,13 +218,12 @@ void Renderer::draw(MTK::View* pView) {
       iz += 1;
     }
 
-    float4x4 scale = Math::makeScale((float3){scl, scl, scl});
     float4x4 zrot  = Math::makeZRotate(_angle * sinf((float)ix));
     float4x4 yrot  = Math::makeYRotate(_angle * cosf((float)iy));
 
-    float x = ((float)ix - (float)kInstanceRows / 2.f) * (2.f * scl) + scl;
-    float y = ((float)iy - (float)kInstanceColumns / 2.f) * (2.f * scl) + scl;
-    float z = ((float)iz - (float)kInstanceDepth / 2.f) * (2.f * scl);
+    float x = ((float)ix - halfRows) * scl2 + scl;
+    float y = ((float)iy - halfColumns) * scl2 + scl;
+    float z = ((float)iz - halfDepth) * scl2;
     float4x4 translate = Math::makeTranslate(
         Math::add(objectPosition, {x, y, z}));
 
@@ -228,7 +232,7 @@ void Renderer::draw(MTK::View* pView) {
     pInstanceData[i].instanceNormalTransform = Math::discardTranslation(
         pInstanceData[i].instanceTransform);
 
-    float iDivNumInstances         = i / (float)kNumInstances;
+    float iDivNumInstances         = i * invNumInstances;
     float r                        = iDivNumInstances;
     float g                        = 1.0f - r;
     float b                        = sinf(M_PI * 2.0f * iDivNumInstances);
