@@ -213,7 +213,7 @@ void Renderer::draw(MTK::View* pView) {
       ix = 0;
       iy += 1;
     }
-    if (iy == kInstanceRows) {
+    if (iy == kInstanceColumns) {
       iy = 0;
       iz += 1;
     }
